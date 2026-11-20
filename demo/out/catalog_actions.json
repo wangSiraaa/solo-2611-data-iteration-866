@@ -7,7 +7,8 @@
     "entity_id": null,
     "lo": null,
     "hi": null,
-    "batch_id": null
+    "batch_id": null,
+    "display": null
   },
   {
     "seq": 2,
@@ -17,7 +18,8 @@
     "entity_id": null,
     "lo": null,
     "hi": null,
-    "batch_id": null
+    "batch_id": null,
+    "display": null
   },
   {
     "seq": 3,
@@ -27,7 +29,8 @@
     "entity_id": null,
     "lo": null,
     "hi": null,
-    "batch_id": null
+    "batch_id": null,
+    "display": null
   },
   {
     "seq": 4,
@@ -37,7 +40,8 @@
     "entity_id": null,
     "lo": null,
     "hi": null,
-    "batch_id": null
+    "batch_id": null,
+    "display": null
   },
   {
     "seq": 5,
@@ -47,6 +51,7 @@
     "entity_id": "trailer:R-A",
     "lo": 1500,
     "hi": 1600,
-    "batch_id": null
+    "batch_id": null,
+    "display": null
   }
 ]

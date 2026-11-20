@@ -1,0 +1,346 @@
+{
+  "cases": {
+    "1_甲_题面案例": {
+      "status": "QUALIFIED",
+      "stage": 3,
+      "earliest_day": "1970-01-04",
+      "chain": [
+        {
+          "role": "guided",
+          "day": "1970-01-02",
+          "ticket_in": "IN1",
+          "klass": "GUIDED",
+          "swapped": true,
+          "instructor": "U"
+        },
+        {
+          "role": "first_independent",
+          "day": "1970-01-03",
+          "ticket_in": "IN2",
+          "klass": "INDEPENDENT",
+          "swapped": false,
+          "instructor": null
+        },
+        {
+          "role": "second_independent",
+          "day": "1970-01-04",
+          "ticket_in": "IN3",
+          "klass": "INDEPENDENT",
+          "swapped": true,
+          "instructor": null
+        }
+      ],
+      "windows": [
+        {
+          "guided_day": "1970-01-02",
+          "window": [
+            "1970-01-03",
+            "1970-01-04",
+            "1970-01-05"
+          ],
+          "status": "satisfied",
+          "first_independent_day": "1970-01-03",
+          "second_independent_day": "1970-01-04",
+          "need": [],
+          "remaining_days": [],
+          "completable": false
+        },
+        {
+          "guided_day": "1970-01-05",
+          "window": [
+            "1970-01-06",
+            "1970-01-07",
+            "1970-01-08"
+          ],
+          "status": "satisfied",
+          "first_independent_day": "1970-01-06",
+          "second_independent_day": "1970-01-07",
+          "need": [],
+          "remaining_days": [],
+          "completable": false
+        }
+      ]
+    },
+    "2_乙_只改展示号": {
+      "net_甲_D1": [
+        3500,
+        3500
+      ],
+      "net_乙_D8": [
+        3500,
+        3500
+      ],
+      "乙_D8_练习": {
+        "practice_id": "PR-IN8-OUT8",
+        "ticket_in": "IN8",
+        "ticket_out": "OUT8",
+        "trip_id": "TRIP0007",
+        "trainee": "乙",
+        "instructor_claim": "U",
+        "tractor": "T1",
+        "ts_in": 723600,
+        "ts_out": 745200,
+        "seq_in": 13,
+        "seq_out": 15,
+        "day": "1970-01-09",
+        "day_rule": "epoch_day",
+        "swapped": false,
+        "klass": "GUIDED",
+        "coverage": 1.0,
+        "conflict": false,
+        "swap_events": [],
+        "display_events": [
+          {
+            "display": "PLATE-66",
+            "seq": 14
+          },
+          {
+            "display": "PLATE-88",
+            "seq": 15
+          }
+        ]
+      },
+      "ruling": {
+        "status": "WAITING_GUIDED",
+        "stage": 1,
+        "earliest_day": null,
+        "chain": [],
+        "windows": []
+      }
+    },
+    "3_甲_在B届": {
+      "status": "WAITING_GUIDED",
+      "stage": 1,
+      "earliest_day": null,
+      "chain": [],
+      "windows": []
+    },
+    "4_丙_补报班次": {
+      "补报前": {
+        "status": "WAITING_GUIDED",
+        "stage": 1,
+        "earliest_day": null,
+        "chain": [],
+        "windows": []
+      },
+      "补报后": {
+        "status": "QUALIFIED",
+        "stage": 3,
+        "earliest_day": "1970-01-12",
+        "chain": [
+          {
+            "role": "guided",
+            "day": "1970-01-10",
+            "ticket_in": "IN9",
+            "klass": "GUIDED",
+            "swapped": true,
+            "instructor": "U"
+          },
+          {
+            "role": "first_independent",
+            "day": "1970-01-11",
+            "ticket_in": "IN10",
+            "klass": "INDEPENDENT",
+            "swapped": false,
+            "instructor": null
+          },
+          {
+            "role": "second_independent",
+            "day": "1970-01-12",
+            "ticket_in": "IN11",
+            "klass": "INDEPENDENT",
+            "swapped": true,
+            "instructor": null
+          }
+        ],
+        "windows": [
+          {
+            "guided_day": "1970-01-10",
+            "window": [
+              "1970-01-11",
+              "1970-01-12",
+              "1970-01-13"
+            ],
+            "status": "satisfied",
+            "first_independent_day": "1970-01-11",
+            "second_independent_day": "1970-01-12",
+            "need": [],
+            "remaining_days": [
+              "1970-01-12",
+              "1970-01-13"
+            ],
+            "completable": false
+          }
+        ]
+      }
+    },
+    "5_签证": {
+      "qualified_day": "1970-01-04",
+      "payload_hash": "338fa2904a98dcd86a838f753fb7175aaa1c5a5366d1e37a675298d4cbaa8c86",
+      "offline_verify": []
+    },
+    "6_晚到更正_推迟": {
+      "甲_D1_练习_klass": "PARTIAL",
+      "ruling": {
+        "status": "QUALIFIED",
+        "stage": 3,
+        "earliest_day": "1970-01-07",
+        "chain": [
+          {
+            "role": "guided",
+            "day": "1970-01-05",
+            "ticket_in": "IN4",
+            "klass": "GUIDED",
+            "swapped": true,
+            "instructor": "U"
+          },
+          {
+            "role": "first_independent",
+            "day": "1970-01-06",
+            "ticket_in": "IN5",
+            "klass": "INDEPENDENT",
+            "swapped": false,
+            "instructor": null
+          },
+          {
+            "role": "second_independent",
+            "day": "1970-01-07",
+            "ticket_in": "IN6",
+            "klass": "INDEPENDENT",
+            "swapped": true,
+            "instructor": null
+          }
+        ],
+        "windows": [
+          {
+            "guided_day": "1970-01-05",
+            "window": [
+              "1970-01-06",
+              "1970-01-07",
+              "1970-01-08"
+            ],
+            "status": "satisfied",
+            "first_independent_day": "1970-01-06",
+            "second_independent_day": "1970-01-07",
+            "need": [],
+            "remaining_days": [],
+            "completable": false
+          }
+        ]
+      },
+      "ruling_history": [
+        {
+          "event_seq": 17,
+          "status": "QUALIFIED",
+          "earliest_day": "1970-01-04",
+          "chain": [
+            {
+              "day": "1970-01-02",
+              "instructor": "U",
+              "klass": "GUIDED",
+              "practice_id": "PR-IN1-OUT1",
+              "role": "guided",
+              "swapped": true,
+              "ticket_in": "IN1",
+              "ticket_out": "OUT1",
+              "trainee": "甲",
+              "trip_id": "TRIP0001"
+            },
+            {
+              "day": "1970-01-03",
+              "instructor": null,
+              "klass": "INDEPENDENT",
+              "practice_id": "PR-IN2-OUT2",
+              "role": "first_independent",
+              "swapped": false,
+              "ticket_in": "IN2",
+              "ticket_out": "OUT2",
+              "trainee": "甲",
+              "trip_id": "TRIP0002"
+            },
+            {
+              "day": "1970-01-04",
+              "instructor": null,
+              "klass": "INDEPENDENT",
+              "practice_id": "PR-IN3-OUT3",
+              "role": "second_independent",
+              "swapped": true,
+              "ticket_in": "IN3",
+              "ticket_out": "OUT3",
+              "trainee": "甲",
+              "trip_id": "TRIP0003"
+            }
+          ]
+        },
+        {
+          "event_seq": 20,
+          "status": "QUALIFIED",
+          "earliest_day": "1970-01-07",
+          "chain": [
+            {
+              "day": "1970-01-05",
+              "instructor": "U",
+              "klass": "GUIDED",
+              "practice_id": "PR-IN4-OUT4",
+              "role": "guided",
+              "swapped": true,
+              "ticket_in": "IN4",
+              "ticket_out": "OUT4",
+              "trainee": "甲",
+              "trip_id": "TRIP0004"
+            },
+            {
+              "day": "1970-01-06",
+              "instructor": null,
+              "klass": "INDEPENDENT",
+              "practice_id": "PR-IN5-OUT5",
+              "role": "first_independent",
+              "swapped": false,
+              "ticket_in": "IN5",
+              "ticket_out": "OUT5",
+              "trainee": "甲",
+              "trip_id": "TRIP0005"
+            },
+            {
+              "day": "1970-01-07",
+              "instructor": null,
+              "klass": "INDEPENDENT",
+              "practice_id": "PR-IN6-OUT6",
+              "role": "second_independent",
+              "swapped": true,
+              "ticket_in": "IN6",
+              "ticket_out": "OUT6",
+              "trainee": "甲",
+              "trip_id": "TRIP0006"
+            }
+          ]
+        }
+      ],
+      "旧证书仍可离线复核原判": []
+    },
+    "7_晚到更正_消除": {
+      "status": "WAITING_GUIDED",
+      "stage": 1,
+      "earliest_day": null,
+      "chain": [],
+      "windows": []
+    },
+    "8_夜间全量复核": {
+      "event_seq": 12009,
+      "practices": 12000,
+      "trainees_reclassified": 0,
+      "trainees": 400,
+      "cohorts": 3,
+      "rulings_changed": 1200,
+      "duplicate_copies_dropped": 0,
+      "seconds": 0.96,
+      "qualified_count": 640,
+      "reconcile": []
+    }
+  },
+  "checks": {
+    "school_reconcile": [],
+    "warehouse_reconcile": [],
+    "catalog_verify": []
+  }
+}

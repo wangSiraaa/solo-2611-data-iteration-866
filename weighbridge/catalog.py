@@ -16,6 +16,11 @@
   为每一段历史挂接产生 ``live=0`` 的更正版 (identity 不变)。历史挂在后来
   更正面前不会被改写，但可以通过 ``corrected_product(original)`` 取到
   "同一身份、更正后质量" 的新产品用于重评；它带 ``predecessor`` 前序身份。
+* 展示号 (``apply_set_display``)：组合对外展示的号牌可以改挂，但稳定身份
+  不变——``set_display`` 只产生 ``display_change`` 来源的 RELABEL 产品，
+  绝不改变 ``(tractor, trailer)`` 身份。换挂 (attach/detach) 与改号
+  (set_display) 在动作流水里严格区分，``actions_between`` 按序号区间返回，
+  供上层（如学校还原练习期间的换挂）逐条核对。
 
 质量区间是整数闭区间 [lo, hi]，0 <= lo <= hi，单位 kg。
 容量：100 个实体。
@@ -36,6 +41,7 @@ SRC_INITIAL = "initial"
 SRC_ATTACH = "attach"
 SRC_DETACH = "detach"
 SRC_MASS_CORRECTION = "mass_correction"
+SRC_DISPLAY = "display_change"
 
 MODE_INITIAL = "INITIAL"
 MODE_EMPTY = "EMPTY"
@@ -61,13 +67,14 @@ CREATE TABLE IF NOT EXISTS entity_mass (
 
 CREATE TABLE IF NOT EXISTS action (
     seq        INTEGER PRIMARY KEY,
-    kind       TEXT NOT NULL CHECK (kind IN ('attach','detach','set_mass')),
+    kind       TEXT NOT NULL CHECK (kind IN ('attach','detach','set_mass','set_display')),
     tractor_id TEXT,
     trailer_id TEXT,
     entity_id  TEXT,
     lo         INTEGER,
     hi         INTEGER,
-    batch_id   TEXT
+    batch_id   TEXT,
+    display    TEXT
 );
 
 CREATE TABLE IF NOT EXISTS binding (
@@ -93,7 +100,8 @@ CREATE TABLE IF NOT EXISTS product (
     relation_src TEXT NOT NULL,
     attach_seq   INTEGER,
     predecessor  TEXT REFERENCES product(product_id),
-    live         INTEGER NOT NULL DEFAULT 1
+    live         INTEGER NOT NULL DEFAULT 1,
+    display      TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS product_tractor ON product(tractor_id, live, action_seq);
 CREATE INDEX IF NOT EXISTS product_pred ON product(predecessor);
@@ -204,6 +212,7 @@ class Product:
     predecessor: str | None
     live: bool
     masses: tuple[ProductMass, ...]
+    display: str = ""
 
     def mass_of(self, kind: str) -> ProductMass:
         for m in self.masses:
@@ -220,6 +229,14 @@ class Product:
             None if self.trailer_id is None else _bare(self.trailer_id),
         )
 
+    def shown_identity(self) -> tuple[str, str | None, str]:
+        """稳定身份 + 当时展示号；展示号不属于稳定身份。"""
+        return (
+            _bare(self.tractor_id),
+            None if self.trailer_id is None else _bare(self.trailer_id),
+            self.display,
+        )
+
     def empty_interval(self) -> tuple[int, int]:
         return (sum(m.lo for m in self.masses), sum(m.hi for m in self.masses))
 
@@ -234,6 +251,7 @@ class Product:
             "attach_seq": self.attach_seq,
             "predecessor": self.predecessor,
             "live": self.live,
+            "display": self.display,
             "masses": [m.to_dict() for m in self.masses],
         }
 
@@ -258,6 +276,7 @@ class Product:
                 )
                 for m in data["masses"]
             ),
+            display=str(data.get("display", "")),
         )
 
 
@@ -306,6 +325,7 @@ class Action:
     lo: int | None
     hi: int | None
     batch_id: str | None
+    display: str | None = None
 
 
 class Catalog:
@@ -423,8 +443,20 @@ class Catalog:
             self._set_mass(c, seq, eid, lo, hi)
         return seq
 
+    def apply_set_display(self, tractor: str, display: str, *, seq: int | None = None) -> int:
+        """改展示号：只换组合对外展示的号牌，稳定身份不变。"""
+        teid = self._known(TRACTOR, tractor)
+        disp = str(display).strip()
+        if not disp:
+            raise CatalogError("display must be non-empty")
+        with self.transaction() as c:
+            seq = self._reserve(c, seq, "set_display", teid, None, None, None,
+                                None, None, disp)
+            self._set_display(c, seq, teid, disp)
+        return seq
+
     def apply_action(self, action: dict, *, seq: int | None = None) -> int:
-        """通用入口：``{"kind": "attach"|"detach"|"set_mass", ...}``。"""
+        """通用入口：``{"kind": "attach"|"detach"|"set_mass"|"set_display", ...}``。"""
         kind = action.get("kind")
         if kind == "attach":
             return self.apply_attach(action["tractor"], action["trailer"], seq=seq)
@@ -433,6 +465,8 @@ class Catalog:
         if kind == "set_mass":
             ek, sid = action["entity"]
             return self.apply_set_mass(ek, sid, action["lo"], action["hi"], seq=seq)
+        if kind == "set_display":
+            return self.apply_set_display(action["tractor"], action["display"], seq=seq)
         raise CatalogError(f"unknown action kind {kind!r}")
 
     def apply_batch(
@@ -475,6 +509,16 @@ class Catalog:
                             c, raw.get("seq"), kind, None, None, eid, lo, hi, bid
                         )
                         self._set_mass(c, seq, eid, lo, hi)
+                    elif kind == "set_display":
+                        teid = self._known(TRACTOR, raw["tractor"])
+                        disp = str(raw["display"]).strip()
+                        if not disp:
+                            raise CatalogError("display must be non-empty")
+                        seq = self._reserve(
+                            c, raw.get("seq"), kind, teid, None, None, None, None,
+                            bid, disp,
+                        )
+                        self._set_display(c, seq, teid, disp)
                     else:
                         raise CatalogError(f"unknown action kind {kind!r}")
                     c.execute(
@@ -508,6 +552,7 @@ class Catalog:
         lo: int | None,
         hi: int | None,
         batch_id: str | None = None,
+        display: str | None = None,
     ) -> int:
         last = c.execute("SELECT MAX(seq) AS m FROM action").fetchone()["m"] or 0
         if seq is None:
@@ -517,9 +562,9 @@ class Catalog:
         if seq <= int(last):
             raise CatalogError(f"action seq must strictly increase: {seq} <= {last}")
         c.execute(
-            "INSERT INTO action(seq, kind, tractor_id, trailer_id, entity_id, lo, hi, batch_id) "
-            "VALUES (?,?,?,?,?,?,?,?)",
-            (seq, kind, tractor_eid, trailer_eid, entity_eid, lo, hi, batch_id),
+            "INSERT INTO action(seq, kind, tractor_id, trailer_id, entity_id, lo, hi, "
+            "batch_id, display) VALUES (?,?,?,?,?,?,?,?,?)",
+            (seq, kind, tractor_eid, trailer_eid, entity_eid, lo, hi, batch_id, display),
         )
         return seq
 
@@ -540,7 +585,10 @@ class Catalog:
             "INSERT INTO binding(tractor_id, trailer_id, attach_seq) VALUES (?,?,?)",
             (tractor_eid, trailer_eid, seq),
         )
-        self._emit(c, seq, tractor_eid, trailer_eid, MODE_EMPTY, SRC_ATTACH, seq, None, True)
+        self._emit(
+            c, seq, tractor_eid, trailer_eid, MODE_EMPTY, SRC_ATTACH, seq, None,
+            True, self._current_display(c, tractor_eid),
+        )
 
     def _detach(
         self, c: sqlite3.Connection, seq: int, tractor_eid: str, trailer_eid: str
@@ -561,7 +609,7 @@ class Catalog:
         )
         self._emit(
             c, seq, tractor_eid, None, MODE_EMPTY, SRC_DETACH,
-            int(row["attach_seq"]), None, True,
+            int(row["attach_seq"]), None, True, self._current_display(c, tractor_eid),
         )
 
     def _set_mass(
@@ -587,7 +635,8 @@ class Catalog:
             if entity_eid == teid or entity_eid in masses:
                 self._emit(
                     c, seq, teid, prev["trailer_id"], MODE_RELABEL,
-                    SRC_MASS_CORRECTION, prev["attach_seq"], prev["product_id"], True,
+                    SRC_MASS_CORRECTION, prev["attach_seq"], prev["product_id"],
+                    True, prev["display"],
                 )
                 if prev["attach_seq"] is not None and prev["trailer_id"] is not None:
                     emitted_attach.add(int(prev["attach_seq"]))
@@ -608,8 +657,36 @@ class Catalog:
                 continue
             self._emit(
                 c, seq, brow["tractor_id"], brow["trailer_id"], MODE_RELABEL,
-                SRC_MASS_CORRECTION, int(brow["attach_seq"]), prev["product_id"], False,
+                SRC_MASS_CORRECTION, int(brow["attach_seq"]), prev["product_id"],
+                False, prev["display"],
             )
+
+    def _set_display(
+        self, c: sqlite3.Connection, seq: int, tractor_eid: str, display: str
+    ) -> None:
+        prev = c.execute(
+            "SELECT * FROM product WHERE tractor_id=? AND live=1 AND action_seq<? "
+            "ORDER BY action_seq DESC, rowid DESC LIMIT 1",
+            (tractor_eid, seq),
+        ).fetchone()
+        if prev is None:
+            raise CatalogError(
+                f"no live product for tractor {_bare(tractor_eid)} to relabel"
+            )
+        self._emit(
+            c, seq, tractor_eid, prev["trailer_id"], MODE_RELABEL, SRC_DISPLAY,
+            prev["attach_seq"], prev["product_id"], True, display,
+        )
+
+    def _current_display(self, c: sqlite3.Connection, tractor_eid: str) -> str:
+        row = c.execute(
+            "SELECT display FROM product WHERE tractor_id=? AND live=1 "
+            "ORDER BY action_seq DESC, rowid DESC LIMIT 1",
+            (tractor_eid,),
+        ).fetchone()
+        if row is None:
+            return _bare(tractor_eid)
+        return str(row["display"])
 
     def _mass_ids(self, c: sqlite3.Connection, product_id: str) -> set[str]:
         return {
@@ -630,6 +707,7 @@ class Catalog:
         attach_seq: int | None,
         predecessor: str | None,
         live: bool,
+        display: str = "",
     ) -> str:
         base = f"P{seq:06d}-{_bare(tractor_eid)}-A{attach_seq if attach_seq is not None else 0}"
         pid = base
@@ -644,10 +722,11 @@ class Catalog:
             raise CatalogError(f"tractor {_bare(tractor_eid)} has no mass range")
         c.execute(
             "INSERT INTO product(product_id, action_seq, tractor_id, trailer_id, mode, "
-            "relation_src, attach_seq, predecessor, live) VALUES (?,?,?,?,?,?,?,?,?)",
+            "relation_src, attach_seq, predecessor, live, display) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?)",
             (
                 pid, seq, tractor_eid, trailer_eid, mode, relation_src, attach_seq,
-                predecessor, int(live),
+                predecessor, int(live), display,
             ),
         )
         c.execute(
@@ -679,7 +758,10 @@ class Catalog:
             "ON m.entity_id=e.entity_id WHERE e.kind=? ORDER BY e.entity_id",
             (TRACTOR,),
         ).fetchall():
-            self._emit(c, 0, row["entity_id"], None, MODE_INITIAL, SRC_INITIAL, None, None, True)
+            self._emit(
+                c, 0, row["entity_id"], None, MODE_INITIAL, SRC_INITIAL, None,
+                None, True, _bare(row["entity_id"]),
+            )
 
     # ---------------------------------------------------------------- queries
     def _load_product(self, product_id: str) -> Product:
@@ -707,6 +789,7 @@ class Catalog:
                 ProductMass(m["kind"], m["entity_id"], int(m["lo"]), int(m["hi"]))
                 for m in masses
             ),
+            display=str(row["display"] or ""),
         )
 
     def product(self, product_id: str) -> Product:
@@ -811,8 +894,30 @@ class Catalog:
                 seq=int(r["seq"]), kind=r["kind"], tractor_id=r["tractor_id"],
                 trailer_id=r["trailer_id"], entity_id=r["entity_id"],
                 lo=r["lo"], hi=r["hi"], batch_id=r["batch_id"],
+                display=r["display"],
             )
             for r in self.conn.execute("SELECT * FROM action ORDER BY seq")
+        ]
+
+    def actions_between(self, tractor: str, seq_lo: int, seq_hi: int) -> list[Action]:
+        """该牵引车在 ``(seq_lo, seq_hi]`` 序号区间内发生的组合动作。
+
+        只含挂在该牵引车名下载的动作 (attach/detach/set_display)；换挂与
+        改号在此严格区分，供上层逐条还原某段时间里实际发生的组合变化。
+        """
+        eid = _eid(TRACTOR, tractor)
+        return [
+            Action(
+                seq=int(r["seq"]), kind=r["kind"], tractor_id=r["tractor_id"],
+                trailer_id=r["trailer_id"], entity_id=r["entity_id"],
+                lo=r["lo"], hi=r["hi"], batch_id=r["batch_id"],
+                display=r["display"],
+            )
+            for r in self.conn.execute(
+                "SELECT * FROM action WHERE tractor_id=? AND seq>? AND seq<=? "
+                "ORDER BY seq",
+                (eid, int(seq_lo), int(seq_hi)),
+            )
         ]
 
     def history(self, kind: str, stable_id: str) -> list[dict]:

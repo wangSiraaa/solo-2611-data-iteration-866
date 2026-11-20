@@ -1,0 +1,379 @@
+{
+  "Kind": "school_qualification_certificate",
+  "Version": 1,
+  "cohort_id": "A届",
+  "trainee": "甲",
+  "qualified_day": "1970-01-04",
+  "rule": {
+    "window_days": 3,
+    "calendar": [
+      "1970-01-02",
+      "1970-01-03",
+      "1970-01-04",
+      "1970-01-05",
+      "1970-01-06",
+      "1970-01-07",
+      "1970-01-08",
+      "1970-01-09",
+      "1970-01-10",
+      "1970-01-11",
+      "1970-01-12",
+      "1970-01-13",
+      "1970-01-14",
+      "1970-01-15"
+    ],
+    "instructors": [
+      "U"
+    ]
+  },
+  "chain": [
+    {
+      "role": "guided",
+      "practice_id": "PR-IN1-OUT1",
+      "trip_id": "TRIP0001",
+      "ticket_in": "IN1",
+      "ticket_out": "OUT1",
+      "trainee": "甲",
+      "instructor_claim": "U",
+      "klass": "GUIDED",
+      "swapped": true,
+      "coverage": 1.0,
+      "day": "1970-01-02",
+      "day_rule": "epoch_day",
+      "tractor": "T1",
+      "ts_in": 118800,
+      "ts_out": 140400,
+      "seq_in": 1,
+      "seq_out": 5,
+      "product_in": {
+        "Kind": "composition_snapshot",
+        "Version": 1,
+        "product": {
+          "action_seq": 1,
+          "attach_seq": 1,
+          "display": "T1",
+          "live": true,
+          "masses": [
+            {
+              "entity_id": "tractor:T1",
+              "hi": 7200,
+              "kind": "tractor",
+              "lo": 7000
+            },
+            {
+              "entity_id": "trailer:RA",
+              "hi": 1600,
+              "kind": "trailer",
+              "lo": 1500
+            }
+          ],
+          "mode": "EMPTY",
+          "predecessor": null,
+          "product_id": "P000001-T1-A1",
+          "relation_src": "attach",
+          "tractor_id": "tractor:T1",
+          "trailer_id": "trailer:RA"
+        },
+        "seq": 1
+      },
+      "product_out": {
+        "Kind": "composition_snapshot",
+        "Version": 1,
+        "product": {
+          "action_seq": 5,
+          "attach_seq": 5,
+          "display": "T1",
+          "live": true,
+          "masses": [
+            {
+              "entity_id": "tractor:T1",
+              "hi": 7200,
+              "kind": "tractor",
+              "lo": 7000
+            },
+            {
+              "entity_id": "trailer:RA",
+              "hi": 1600,
+              "kind": "trailer",
+              "lo": 1500
+            }
+          ],
+          "mode": "EMPTY",
+          "predecessor": null,
+          "product_id": "P000005-T1-A5",
+          "relation_src": "attach",
+          "tractor_id": "tractor:T1",
+          "trailer_id": "trailer:RA"
+        },
+        "seq": 5
+      },
+      "evidence": {
+        "actions": [
+          {
+            "display": null,
+            "kind": "detach",
+            "seq": 2,
+            "tractor": "T1",
+            "trailer": "RA"
+          },
+          {
+            "display": null,
+            "kind": "attach",
+            "seq": 3,
+            "tractor": "T1",
+            "trailer": "RB"
+          },
+          {
+            "display": null,
+            "kind": "detach",
+            "seq": 4,
+            "tractor": "T1",
+            "trailer": "RB"
+          },
+          {
+            "display": null,
+            "kind": "attach",
+            "seq": 5,
+            "tractor": "T1",
+            "trailer": "RA"
+          }
+        ],
+        "display_events": [],
+        "shifts": [
+          {
+            "end_ts": 151200,
+            "instructor": "U",
+            "shift_id": "SH-U-D1",
+            "start_ts": 115200,
+            "version": 1
+          }
+        ],
+        "swap_events": [
+          {
+            "kind": "detach",
+            "seq": 2,
+            "trailer": "RA"
+          },
+          {
+            "kind": "attach",
+            "seq": 3,
+            "trailer": "RB"
+          },
+          {
+            "kind": "detach",
+            "seq": 4,
+            "trailer": "RB"
+          },
+          {
+            "kind": "attach",
+            "seq": 5,
+            "trailer": "RA"
+          }
+        ]
+      }
+    },
+    {
+      "role": "first_independent",
+      "practice_id": "PR-IN2-OUT2",
+      "trip_id": "TRIP0002",
+      "ticket_in": "IN2",
+      "ticket_out": "OUT2",
+      "trainee": "甲",
+      "instructor_claim": null,
+      "klass": "INDEPENDENT",
+      "swapped": false,
+      "coverage": null,
+      "day": "1970-01-03",
+      "day_rule": "epoch_day",
+      "tractor": "T1",
+      "ts_in": 205200,
+      "ts_out": 226800,
+      "seq_in": 5,
+      "seq_out": 5,
+      "product_in": {
+        "Kind": "composition_snapshot",
+        "Version": 1,
+        "product": {
+          "action_seq": 5,
+          "attach_seq": 5,
+          "display": "T1",
+          "live": true,
+          "masses": [
+            {
+              "entity_id": "tractor:T1",
+              "hi": 7200,
+              "kind": "tractor",
+              "lo": 7000
+            },
+            {
+              "entity_id": "trailer:RA",
+              "hi": 1600,
+              "kind": "trailer",
+              "lo": 1500
+            }
+          ],
+          "mode": "EMPTY",
+          "predecessor": null,
+          "product_id": "P000005-T1-A5",
+          "relation_src": "attach",
+          "tractor_id": "tractor:T1",
+          "trailer_id": "trailer:RA"
+        },
+        "seq": 5
+      },
+      "product_out": {
+        "Kind": "composition_snapshot",
+        "Version": 1,
+        "product": {
+          "action_seq": 5,
+          "attach_seq": 5,
+          "display": "T1",
+          "live": true,
+          "masses": [
+            {
+              "entity_id": "tractor:T1",
+              "hi": 7200,
+              "kind": "tractor",
+              "lo": 7000
+            },
+            {
+              "entity_id": "trailer:RA",
+              "hi": 1600,
+              "kind": "trailer",
+              "lo": 1500
+            }
+          ],
+          "mode": "EMPTY",
+          "predecessor": null,
+          "product_id": "P000005-T1-A5",
+          "relation_src": "attach",
+          "tractor_id": "tractor:T1",
+          "trailer_id": "trailer:RA"
+        },
+        "seq": 5
+      },
+      "evidence": {
+        "actions": [],
+        "display_events": [],
+        "shifts": [],
+        "swap_events": []
+      }
+    },
+    {
+      "role": "second_independent",
+      "practice_id": "PR-IN3-OUT3",
+      "trip_id": "TRIP0003",
+      "ticket_in": "IN3",
+      "ticket_out": "OUT3",
+      "trainee": "甲",
+      "instructor_claim": null,
+      "klass": "INDEPENDENT",
+      "swapped": true,
+      "coverage": null,
+      "day": "1970-01-04",
+      "day_rule": "epoch_day",
+      "tractor": "T1",
+      "ts_in": 291600,
+      "ts_out": 313200,
+      "seq_in": 5,
+      "seq_out": 7,
+      "product_in": {
+        "Kind": "composition_snapshot",
+        "Version": 1,
+        "product": {
+          "action_seq": 5,
+          "attach_seq": 5,
+          "display": "T1",
+          "live": true,
+          "masses": [
+            {
+              "entity_id": "tractor:T1",
+              "hi": 7200,
+              "kind": "tractor",
+              "lo": 7000
+            },
+            {
+              "entity_id": "trailer:RA",
+              "hi": 1600,
+              "kind": "trailer",
+              "lo": 1500
+            }
+          ],
+          "mode": "EMPTY",
+          "predecessor": null,
+          "product_id": "P000005-T1-A5",
+          "relation_src": "attach",
+          "tractor_id": "tractor:T1",
+          "trailer_id": "trailer:RA"
+        },
+        "seq": 5
+      },
+      "product_out": {
+        "Kind": "composition_snapshot",
+        "Version": 1,
+        "product": {
+          "action_seq": 7,
+          "attach_seq": 7,
+          "display": "T1",
+          "live": true,
+          "masses": [
+            {
+              "entity_id": "tractor:T1",
+              "hi": 7200,
+              "kind": "tractor",
+              "lo": 7000
+            },
+            {
+              "entity_id": "trailer:RB",
+              "hi": 2200,
+              "kind": "trailer",
+              "lo": 2000
+            }
+          ],
+          "mode": "EMPTY",
+          "predecessor": null,
+          "product_id": "P000007-T1-A7",
+          "relation_src": "attach",
+          "tractor_id": "tractor:T1",
+          "trailer_id": "trailer:RB"
+        },
+        "seq": 7
+      },
+      "evidence": {
+        "actions": [
+          {
+            "display": null,
+            "kind": "detach",
+            "seq": 6,
+            "tractor": "T1",
+            "trailer": "RA"
+          },
+          {
+            "display": null,
+            "kind": "attach",
+            "seq": 7,
+            "tractor": "T1",
+            "trailer": "RB"
+          }
+        ],
+        "display_events": [],
+        "shifts": [],
+        "swap_events": [
+          {
+            "kind": "detach",
+            "seq": 6,
+            "trailer": "RA"
+          },
+          {
+            "kind": "attach",
+            "seq": 7,
+            "trailer": "RB"
+          }
+        ]
+      }
+    }
+  ],
+  "issued_event": 17,
+  "payload_hash": "338fa2904a98dcd86a838f753fb7175aaa1c5a5366d1e37a675298d4cbaa8c86",
+  "signature": "c9af96828c909c58a009614530e8be9a4758bf03e9072b932d04bb76b629b48c"
+}
